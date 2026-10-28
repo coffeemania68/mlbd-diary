@@ -1,0 +1,155 @@
+/* 타임라인 화면 (screens/timeline.js).
+   세로 목록 하나라 가로 스크롤을 만들지 않는다. 누를 수 있는 컨트롤은 최소 var(--touch) = 44px */
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+  max-width: 760px;
+  padding: var(--space);
+}
+
+.tl-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space);
+}
+.tl-header .screen-title {
+  margin: 0;
+}
+.tl-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timeline .btn,
+.timeline select,
+.timeline input {
+  min-height: var(--touch);
+}
+
+/* ── 빈 상태 ── */
+.tl-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space);
+  padding: calc(var(--space) * 2) var(--space);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  text-align: center;
+}
+.tl-empty[hidden] {
+  display: none;
+}
+.tl-empty-text {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+/* ── 사건 목록 ── */
+.tl-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tl-list[hidden] {
+  display: none;
+}
+
+.tl-event {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: var(--space);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: var(--shadow);
+}
+
+.tl-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 12px;
+}
+
+.tl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.tl-field input,
+.tl-field textarea,
+.tl-field select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.tl-label {
+  font-weight: 600;
+}
+
+.tl-desc {
+  min-height: calc(var(--touch) * 2);
+}
+
+.tl-episode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.tl-episode select {
+  flex: 1 1 200px;
+  width: auto;
+}
+.tl-episode-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: 0 4px;
+  color: var(--color-accent);
+  overflow-wrap: anywhere;
+}
+.tl-episode-link-slot:empty {
+  display: none;
+}
+
+.tl-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tl-actions .btn {
+  min-width: var(--touch);
+}
+.tl-delete {
+  margin-left: auto;
+  color: var(--color-danger);
+}
+
+.tl-title,
+.tl-date {
+  overflow-wrap: anywhere;
+}
+
+/* 휴대폰: 작중 날짜와 제목을 위아래로 */
+@media (max-width: 599px) {
+  .tl-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .timeline {
+    padding: 12px;
+  }
+}

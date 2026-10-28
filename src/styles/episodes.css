@@ -1,0 +1,412 @@
+/* 에피소드 목록 (screens/episode-list.js).
+   터치 영역은 최소 var(--touch) = 44px. 페이지 가로 스크롤 없음 (요구사항 2.12, 16.4, 16.5) */
+
+.ep-list {
+  padding: var(--space);
+}
+
+/* ── 머리: 제목, 비축분, 새 에피소드 ── */
+.ep-list-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px var(--space);
+  margin: 0 0 var(--space);
+}
+.ep-list-head .screen-title {
+  margin: 0;
+}
+.ep-reserve {
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+  font-weight: 600;
+}
+.ep-list-head .btn {
+  margin-left: auto;
+}
+.ep-list .btn {
+  min-height: var(--touch);
+}
+
+/* ── 상태 필터: 버튼 6개, 좁으면 줄바꿈 ── */
+.ep-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 var(--space);
+}
+.ep-filter .chip {
+  min-width: var(--touch);
+  min-height: var(--touch);
+  white-space: nowrap;
+}
+
+/* ── 표 ── */
+.ep-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  table-layout: fixed;
+}
+.ep-table th,
+.ep-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: middle;
+}
+.ep-table th {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+  font-weight: 600;
+}
+.ep-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.ep-table .ep-col-number {
+  width: 5em;
+}
+.ep-table .ep-col-status {
+  width: 6em;
+}
+.ep-table .ep-col-chars {
+  width: 9em;
+}
+.ep-table .ep-col-date {
+  width: 7.5em;
+}
+
+/* 행 전체 링크: 제목 칸의 <a>가 ::after로 행을 덮는다 */
+.ep-table tbody tr {
+  position: relative;
+}
+.ep-table tbody tr:active {
+  background: var(--color-surface-alt);
+}
+.ep-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  color: var(--color-text);
+  font-weight: 600;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.ep-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.ep-link:focus-visible {
+  outline: none;
+}
+.ep-link:focus-visible::after {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
+}
+.ep-link.is-empty {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.ep-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-surface-alt);
+  font-size: var(--font-size-small);
+  white-space: nowrap;
+}
+.ep-status-draft,
+.ep-status-revised,
+.ep-status-scheduled {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+}
+.ep-status-published {
+  color: var(--color-success);
+}
+
+/* ── 빈 상태 ── */
+.ep-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space);
+  padding: calc(var(--space) * 2) var(--space);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  text-align: center;
+}
+.ep-empty-text,
+.ep-empty-filter {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+.ep-empty-filter {
+  padding: var(--space);
+  text-align: center;
+}
+
+/* ── 휴대폰(600px 미만): 머리 줄을 숨기고 행을 2줄 격자 카드로 ──
+   1줄: 회차·제목, 2줄: 상태·글자수·발행일 */
+@media (max-width: 599.98px) {
+  .ep-table,
+  .ep-table tbody {
+    display: block;
+    border: none;
+    background: none;
+  }
+  .ep-table thead {
+    display: none;
+  }
+  .ep-table tbody tr {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      'number title title'
+      'status chars date';
+    gap: 4px 8px;
+    margin: 0 0 8px;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    box-shadow: var(--shadow);
+  }
+  .ep-table tbody tr:active {
+    background: var(--color-surface-alt);
+  }
+  .ep-table td {
+    display: block;
+    width: auto;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    overflow-wrap: anywhere;
+  }
+  .ep-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--color-text-muted);
+    font-size: 12px;
+  }
+  .ep-table td.ep-col-number {
+    grid-area: number;
+  }
+  .ep-table td.ep-col-title {
+    grid-area: title;
+  }
+  .ep-table td.ep-col-status {
+    grid-area: status;
+  }
+  .ep-table td.ep-col-chars {
+    grid-area: chars;
+  }
+  .ep-table td.ep-col-date {
+    grid-area: date;
+  }
+  .ep-link {
+    min-height: 0;
+  }
+  .ep-link::after {
+    border-radius: var(--radius);
+  }
+}
+
+/* ── 에피소드 상세 (screens/episode-detail.js) ──
+   긴 제목·URL은 overflow-wrap: anywhere로 줄바꿈해 가로 스크롤을 만들지 않는다 (16.4, 16.5) */
+
+.episode-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space);
+  min-width: 0;
+}
+
+.ed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space);
+}
+
+.ed-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding-right: 8px;
+  text-decoration: none;
+}
+
+.ed-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+}
+
+.ed-row > .ed-field {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.ed-row > .ed-field-number {
+  flex: 0 1 140px;
+}
+
+.ed-row > .ed-field-grow {
+  flex: 1 1 260px;
+}
+
+.ed-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ed-field input,
+.ed-field select,
+.ed-field textarea {
+  min-height: var(--touch);
+  max-width: 100%;
+}
+
+.ed-field textarea {
+  field-sizing: content;
+  min-height: calc(var(--touch) * 2);
+}
+
+.ed-subtitle {
+  margin: 0;
+  font-size: var(--font-size-small);
+  font-weight: normal;
+  color: var(--color-text-muted);
+}
+
+.ed-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.episode-detail .btn {
+  min-height: var(--touch);
+}
+
+.ed-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ed-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ed-line input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ed-empty {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+/* 참고 링크 */
+.ed-link-filter .chip {
+  min-width: var(--touch);
+  min-height: var(--touch);
+  white-space: nowrap;
+}
+
+.ed-link-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ed-link-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ed-link-category {
+  margin: 0;
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* 긴 URL은 잘라 숨기지 않고 줄바꿈한다 */
+.ed-link-item {
+  flex-wrap: wrap;
+}
+
+.ed-link-item .ref-link {
+  display: flex;
+  align-items: center;
+  flex: 1 1 160px;
+  min-width: 0;
+  min-height: var(--touch);
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+
+.ref-link-invalid {
+  color: var(--color-text-muted);
+}
+
+.ed-link-item.is-editing {
+  border-color: var(--color-accent-strong);
+}
+
+.ed-link-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.ed-link-form-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px var(--space);
+}
+
+.ed-link-form-grid > .ed-field {
+  flex: 1 1 180px;
+}
+
+.ed-link-form-grid > .ed-field:last-child {
+  flex-basis: 100%;
+}
+
+.ed-danger-zone {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space);
+  border-top: 1px solid var(--color-border);
+}

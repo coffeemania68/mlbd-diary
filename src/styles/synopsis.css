@@ -1,0 +1,36 @@
+/* 시놉시스 화면 (screens/synopsis.js) */
+
+.synopsis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+  max-width: 760px;
+}
+
+.synopsis-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space);
+}
+
+.synopsis-header .screen-title {
+  margin: 0;
+}
+
+.synopsis-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.synopsis-short {
+  min-height: calc(var(--touch) * 3);
+}
+
+/* 긴 시놉시스: 입력 내용 길이만큼 높이가 늘어난다 (요구사항 14.4) */
+.synopsis-long {
+  field-sizing: content;
+  min-height: calc(var(--touch) * 6);
+  resize: none;
+}

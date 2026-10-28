@@ -1,0 +1,343 @@
+/* 만다라트 목록 (screens/mandalart-list.js)과 상세 (screens/mandalart.js).
+   색은 base.css 변수만 쓴다. 칸 배경색만 사용자가 고른 팔레트 값(인라인 style)이다.
+   휴대폰(600px 미만)은 .md-phone, 태블릿(600px 이상)은 .md-grid만 보인다 (요구사항 12.10, 12.11). */
+
+/* ── 목록 ── */
+.md-list {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.md-list-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px var(--space);
+  margin: 0 0 var(--space);
+}
+
+.md-list-head .screen-title {
+  margin: 0;
+}
+
+.md-list-head .btn {
+  margin-left: auto;
+}
+
+.md-list-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.md-list-link {
+  display: flex;
+  width: 100%;
+  min-height: var(--touch);
+  padding: 10px var(--space);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.md-list-link:active {
+  background: var(--color-surface-alt);
+}
+
+.md-list-link.is-empty {
+  color: var(--color-text-muted);
+}
+
+.md-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: calc(var(--space) * 2) var(--space);
+  text-align: center;
+}
+
+.md-empty-text {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+/* ── 상세: 공통 ── */
+.mandalart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.md-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space);
+}
+
+.md-back {
+  text-decoration: none;
+  padding-right: 8px;
+}
+
+.md-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.md-field input {
+  overflow-wrap: anywhere;
+}
+
+.md-field textarea {
+  field-sizing: content;
+  min-height: calc(var(--touch) * 2);
+}
+
+.md-danger-zone {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── 칸 (태블릿·휴대폰 확대 공통) ── */
+.md-cell,
+.md-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch);
+  min-height: var(--touch);
+  padding: 4px;
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 0;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  text-align: center;
+  overflow: hidden;
+}
+
+.md-cell-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  font-size: clamp(10px, 1.6vw, 14px);
+  line-height: 1.3;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* 가운데 블록: 굵은 글자 + 진한 테두리 (요구사항 12.3) */
+.md-cell.center,
+.md-block.center {
+  font-weight: 700;
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+
+.md-cell.is-selected {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 태블릿: 9×9 한 화면 (요구사항 12.2, 12.4, 12.10) ── */
+.md-grid {
+  display: none;
+  width: min(100%, 720px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  border: 2px solid var(--color-text-muted);
+  border-radius: var(--radius-small);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.md-grid .md-cell {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+/* 마지막 열·행은 바깥 테두리가 맡는다 */
+.md-grid .md-cell:nth-child(9n) {
+  border-right: 0;
+}
+
+.md-grid .md-cell:nth-child(n + 73) {
+  border-bottom: 0;
+}
+
+/* 블록 경계: 칸 경계보다 굵은 선 */
+.md-grid .md-cell.edge-right {
+  border-right: 2px solid var(--color-text-muted);
+}
+
+.md-grid .md-cell.edge-bottom {
+  border-bottom: 2px solid var(--color-text-muted);
+}
+
+/* ── 휴대폰: 개요 3×3 ↔ 확대 3×3 (요구사항 12.11, 12.12) ── */
+.md-phone {
+  display: block;
+}
+
+.md-overview,
+.md-zoom-cells {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid var(--color-text-muted);
+  border-radius: var(--radius-small);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.md-overview[hidden],
+.md-zoom-cells[hidden] {
+  display: none;
+}
+
+.md-overview .md-block,
+.md-zoom-cells .md-cell {
+  width: 100%;
+  height: 100%;
+}
+
+.md-overview .md-block:nth-child(3n),
+.md-zoom-cells .md-cell:nth-child(3n) {
+  border-right: 0;
+}
+
+.md-overview .md-block:nth-child(n + 7),
+.md-zoom-cells .md-cell:nth-child(n + 7) {
+  border-bottom: 0;
+}
+
+/* 개요의 블록 사이 선은 블록 경계라 굵게 */
+.md-overview .md-block {
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+  border-color: var(--color-text-muted);
+}
+
+.md-phone .md-cell-text {
+  font-size: 14px;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+}
+
+.md-zoom {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.md-zoom-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.md-zoom-title {
+  margin: 0;
+  font-size: var(--font-size);
+}
+
+@media (min-width: 600px) {
+  .md-grid {
+    display: grid;
+  }
+
+  .md-phone {
+    display: none;
+  }
+}
+
+/* ── 칸 편집 패널 ── */
+.md-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: var(--space);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.md-editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.md-editor-title {
+  margin: 0;
+  font-size: var(--font-size);
+}
+
+.md-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.md-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px 0 8px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.md-swatch[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-soft);
+  color: var(--color-accent-strong);
+}
+
+.md-swatch-color {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+}
+
+/* "색 없음": 빗금으로 표시 */
+.md-swatch.is-none .md-swatch-color {
+  background: linear-gradient(
+    135deg,
+    transparent 45%,
+    var(--color-text-muted) 45%,
+    var(--color-text-muted) 55%,
+    transparent 55%
+  );
+}
+
+.md-swatch-label {
+  font-size: var(--font-size-small);
+}

@@ -1,0 +1,472 @@
+/* 위젯 내용 (screens/widgets/*.js). 틀·선택·손잡이는 page.css가 맡는다.
+   widgets/index.js에서 import한다. 크기는 Page_Coordinates 기준(무대 배율이 곱해진다). */
+
+/* 내용이 넘치면 위젯 안에서만 세로 스크롤 (요구 10.5) */
+.widget-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  touch-action: pan-y;
+  box-sizing: border-box;
+}
+
+/* 편집 모드에서는 내용 입력을 막는다(끌기·크기 조절이 먼저). 모드는 조상의 data-mode로 바뀐다 */
+[data-mode='edit'] .widget-content input,
+[data-mode='edit'] .widget-content textarea,
+[data-mode='edit'] .widget-content button {
+  pointer-events: none;
+}
+
+/* ── 텍스트 메모 (text.js) ── */
+.widget-memo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: var(--memo-bg, #fffdf7);
+  border-radius: var(--radius, 10px);
+}
+.memo-title,
+.memo-body {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+}
+.memo-title {
+  font-size: 22px;
+  font-weight: 600;
+  min-height: var(--touch, 44px);
+  border-bottom: 1px solid rgb(43 39 51 / 0.12);
+}
+.memo-body {
+  flex: 1;
+  min-height: 80px;
+  resize: none;
+  line-height: var(--line-height, 1.55);
+}
+.memo-title:focus,
+.memo-body:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.memo-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.memo-swatch {
+  width: var(--touch, 44px);
+  height: var(--touch, 44px);
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--swatch);
+  cursor: pointer;
+}
+.memo-swatch[aria-pressed='true'] {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ── 체크리스트 (checklist.js) ── */
+.widget-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--color-surface, #fff);
+  border-radius: var(--radius, 10px);
+}
+.checklist-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.checklist-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--touch, 44px);
+  border-bottom: 1px solid var(--color-border);
+}
+.checklist-check {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin: 8px;
+  accent-color: var(--color-accent);
+}
+.checklist-text {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--touch, 44px);
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+}
+.checklist-row[data-done='true'] .checklist-text {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+.checklist-remove {
+  flex: none;
+  min-width: var(--touch, 44px);
+  min-height: var(--touch, 44px);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 22px;
+  cursor: pointer;
+}
+.checklist-add {
+  align-self: flex-start;
+  min-height: var(--touch, 44px);
+  padding: 0 12px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-small, 6px);
+  background: none;
+  color: var(--color-accent);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* ── 이미지 (image.js) ── */
+.widget-image {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--color-surface, #fff);
+  border-radius: var(--radius, 10px);
+}
+.image-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* 원래 비율 유지 (요구 11.2) */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.widget-image[data-empty='true'] {
+  border: 2px dashed var(--color-border);
+}
+.image-pick,
+.image-change {
+  min-width: var(--touch, 44px);
+  min-height: var(--touch, 44px);
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small, 6px);
+  background: var(--color-surface, #fff);
+  color: var(--color-accent);
+  font: inherit;
+  cursor: pointer;
+}
+.image-change {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  opacity: 0.9;
+}
+.widget-image[data-busy='true'] .image-pick,
+.widget-image[data-busy='true'] .image-change {
+  opacity: 0.5;
+}
+/* 편집 모드에서는 "다른 사진"을 숨겨 사진 위를 가리지 않는다 */
+[data-mode='edit'] .image-change {
+  display: none;
+}
+
+/* ── 월간 달력 (calendar.js) ── */
+.widget-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: var(--color-surface, #fff);
+  border-radius: var(--radius, 10px);
+  font-size: 18px;
+}
+.cal-title {
+  font-size: 26px;
+  font-weight: 600;
+  text-align: center;
+}
+.cal-head,
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr)); /* 가로로 넘치지 않는다 */
+  gap: 4px;
+}
+.cal-weekday {
+  text-align: center;
+  font-size: 16px;
+  color: var(--color-text-muted);
+}
+.cal-grid {
+  flex: 1;
+  grid-auto-rows: minmax(0, 1fr);
+}
+.cal-day {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  min-width: 0;
+  min-height: 0;
+  padding: 4px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small, 6px);
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 16px;
+  text-align: left;
+  cursor: pointer;
+}
+.cal-day.is-blank {
+  border-color: transparent;
+  cursor: default;
+}
+.cal-weekday.is-sun,
+.cal-day.is-sun .cal-num {
+  color: #c0392b;
+}
+.cal-weekday.is-sat,
+.cal-day.is-sat .cal-num {
+  color: #2e6bb8;
+}
+.cal-day.is-today {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+.cal-num {
+  font-weight: 600;
+  line-height: 1.2;
+}
+.cal-eps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  min-width: 0;
+}
+.cal-ep {
+  max-width: 100%;
+  padding: 0 4px;
+  overflow: hidden;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* 발행한 회차는 채운 모양, 나머지는 테두리만 (요구 12.5) */
+.cal-ep.is-published {
+  background: var(--color-accent);
+  color: #fff;
+}
+.cal-ep.is-planned {
+  border: 1px dashed var(--color-accent);
+  color: var(--color-accent);
+}
+/* 길게 누르기(12.10)에서 글자 선택·iOS 메뉴가 뜨지 않게 한다 */
+.cal-day:not(.is-blank) {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+/* 날짜 메모: 한 줄 말줄임 (12.11) */
+.cal-memo {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--color-text-muted, var(--color-text));
+  font-size: 14px;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ── 캐릭터 카드·에피소드 카드 (character-card.js, episode-card.js) ── */
+.widget-card {
+  background: var(--color-surface, #fff);
+  border-radius: var(--radius, 10px);
+}
+.card-btn {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: none;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.card-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+/* 원본이 지워진 카드 (요구 13.6). 이동·크기 조절은 틀이 맡으므로 다른 위젯과 같다(13.7) */
+.card-deleted {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius, 10px);
+  box-sizing: border-box;
+  color: var(--color-text-muted);
+  font-size: 22px;
+}
+
+.ccard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.ccard-thumb {
+  flex: none;
+  width: 160px;
+  height: 160px;
+  max-height: 100%;
+  border-radius: var(--radius-small, 6px);
+  object-fit: cover;
+  background: var(--color-border);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.ccard-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+.ccard-name {
+  font-size: 28px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.ccard-role {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 16px;
+}
+.ccard-quote {
+  color: var(--color-text-muted);
+  font-size: 18px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.ccard-name.is-empty,
+.ecard-title.is-empty {
+  color: var(--color-text-muted);
+}
+
+.ecard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 100%;
+  padding: 16px 20px;
+  box-sizing: border-box;
+}
+.ecard-label {
+  color: var(--color-accent);
+  font-size: 18px;
+  font-weight: 600;
+}
+.ecard-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+}
+.ecard-number {
+  flex: none;
+  font-size: 30px;
+  font-weight: 700;
+}
+.ecard-title {
+  min-width: 0;
+  font-size: 26px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.ecard-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 18px;
+}
+.ecard-status {
+  padding: 2px 10px;
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+  color: var(--color-accent);
+}
+.ecard-chars,
+.ecard-date {
+  color: var(--color-text-muted);
+  font-size: 18px;
+}
+.ecard-none {
+  font-size: 22px;
+  color: var(--color-text-muted);
+}
+.ecard-reserve {
+  align-self: flex-start;
+  padding: 4px 12px;
+  border-radius: var(--radius-small, 6px);
+  background: rgb(43 39 51 / 0.06);
+  font-size: 18px;
+  font-weight: 600;
+}
+/* ── 스티커 (sticker.js) ── 회전한 모서리가 틀 밖으로 나가도 잘리지 않게 overflow visible */
+.widget-content.sticker-content {
+  display: grid;
+  place-items: center;
+  overflow: visible;
+}
+.sticker-content .sticker-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  pointer-events: none;
+}
+/* 팩에 없는 id: 점선 상자와 글자 */
+.sticker-missing {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-small, 6px);
+  color: var(--color-text-muted);
+  font-size: 18px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}

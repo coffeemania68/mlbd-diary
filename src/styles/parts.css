@@ -1,0 +1,127 @@
+/* screens/parts/ 공통 입력 조각: 칩 입력, 인물 고르기, 링크 목록, 필터 버튼 줄, 입력 오류 문구.
+   parts/*.js 파일이 import한다. 누를 수 있는 것은 모두 44px 이상(--touch). */
+
+/* ── 칩 입력 (chip-input.js) ── */
+.chip-input,
+.character-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-removable {
+  gap: 2px;
+  padding: 0 0 0 14px;
+  max-width: 100%;
+}
+
+.chip-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-width: var(--touch);
+  min-height: var(--touch);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+.chip-remove:active {
+  background: var(--color-surface-alt);
+}
+
+.chip-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.chip-input-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.chip-input-row .btn {
+  flex: none;
+}
+
+.character-picker-empty {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+/* ── 참고 링크 목록 ── */
+.link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--touch);
+  padding: 4px 4px 4px 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+}
+
+.link-item a {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-host {
+  flex: none;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+/* ── 필터 버튼 줄 (분류·태그) ── */
+.filter-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.filter-row::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-row .chip {
+  flex: none;
+}
+
+/* ── 입력 오류 문구 (예: 잘못된 URL) ── */
+.field-error {
+  margin: 4px 0 0;
+  color: var(--color-danger);
+  font-size: var(--font-size-small);
+}

@@ -1,0 +1,529 @@
+/* 페이지 무대 (screens/page/stage.js, 설계 2·3절) */
+
+/* 스크롤은 viewport 안에서만. 페이지 자체는 가로로 넘치지 않는다(26.2) */
+.page-viewport {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y; /* 브라우저 핀치 확대 대신 stage.js가 처리 */
+  background: var(--color-surface-alt);
+}
+
+.page-sizer {
+  position: relative;
+  overflow: hidden;
+}
+
+.page-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1000px;   /* PAGE_W */
+  height: 1414px;  /* PAGE_H */
+  transform-origin: 0 0;
+  background: var(--page-paper); /* 테마 종이색 (base.css, THEMES) */
+}
+
+/* ── 모드별 입력 (설계 2절 표) ── */
+
+/* view: 위젯 내용 입력, 틀은 움직이지 않음, 잉크 캔버스는 입력을 통과 */
+[data-mode='view'] .widget-content {
+  pointer-events: auto;
+}
+
+/* edit: 내용은 입력을 받지 않고, 틀을 눌러 선택·끌기 */
+[data-mode='edit'] .widget-content {
+  pointer-events: none;
+}
+[data-mode='edit'] .widget {
+  touch-action: none;
+}
+
+/* ink: 위젯은 입력을 받지 않고(7.10), 잉크 캔버스가 받는다 */
+[data-mode='ink'] .widget,
+[data-mode='ink'] .widget-content {
+  pointer-events: none;
+}
+[data-mode='ink'].page-viewport,
+[data-mode='ink'] .page-viewport {
+  touch-action: none; /* 두 손가락 이동·확대는 stage.js가 직접 */
+}
+
+/* 손글씨 캔버스 2장 (ink-controller.js): 위젯 층(z-index 0) 위, 페이지 전체 크기(14.1).
+   픽셀 크기는 스크립트가 정하고 CSS 크기는 Page_Coordinates 그대로 */
+.ink-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1000px;   /* PAGE_W */
+  height: 1414px;  /* PAGE_H */
+  pointer-events: none; /* view·edit (14.3) */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.ink-cache {
+  z-index: 1;
+}
+.ink-live {
+  z-index: 2;
+}
+[data-mode='ink'] .ink-canvas {
+  pointer-events: auto;
+  touch-action: none;
+}
+
+/* ── 페이지 화면 틀 (screens/page/page-screen.js) ── */
+.page-screen {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.page-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+}
+
+.page-modes {
+  display: flex;
+  gap: 4px;
+}
+
+.page-mode-btn {
+  min-width: var(--touch, 44px);
+  min-height: var(--touch, 44px);
+}
+.page-mode-btn[aria-pressed='true'] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.page-stage-host {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* 위젯 층: 자기 쌓임 맥락을 가져 잉크 캔버스(9.1)가 항상 위에 온다 */
+.page-widget-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* ── 위젯 틀 (위치·크기는 인라인 left/top/width/height, Page_Coordinates 그대로) ── */
+.widget {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+/* 등록되지 않은 type: 빈 틀 */
+.widget-unknown {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius, 10px);
+  background: var(--color-surface-alt);
+}
+
+[data-mode='edit'] .widget {
+  cursor: move;
+  outline: calc(1px * var(--inv-scale, 1)) dashed var(--color-border);
+}
+
+[data-mode='edit'] .widget.selected {
+  outline: calc(3px * var(--inv-scale, 1)) solid var(--color-accent);
+}
+
+.widget-dragging {
+  opacity: 0.9;
+  will-change: transform;
+}
+
+/* 크기 조절 손잡이: 오른쪽 아래 하나, 화면에서 44px로 보이도록 무대 배율을 되돌린다 */
+.resize-handle {
+  display: none;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 44px;
+  height: 44px;
+  transform: scale(var(--inv-scale, 1));
+  transform-origin: 100% 100%;
+  touch-action: none;
+  cursor: nwse-resize;
+  z-index: 1;
+}
+.resize-handle::after {
+  content: '';
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 18px;
+  height: 18px;
+  border-right: 4px solid var(--color-accent);
+  border-bottom: 4px solid var(--color-accent);
+  border-bottom-right-radius: 4px;
+}
+[data-mode='edit'] .widget.selected .resize-handle {
+  display: block;
+}
+
+/* 크기 조절 중 외곽선만 바뀐다 */
+.resize-ghost {
+  position: absolute;
+  box-sizing: border-box;
+  border: calc(2px * var(--inv-scale, 1)) dashed var(--color-accent);
+  background: rgb(107 79 138 / 0.06);
+  pointer-events: none;
+}
+
+/* ── 하단 도구 막대 (편집·손글씨 모드) ── */
+.page-toolbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--touch, 44px);
+  padding: 8px;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.toolbar-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toolbar-history {
+  margin-left: auto;
+}
+
+.toolbar-btn {
+  min-width: var(--touch, 44px);
+  min-height: var(--touch, 44px);
+}
+
+.toolbar-danger {
+  color: var(--color-danger);
+}
+
+/* ── 손글씨 막대 (toolbar.js inkGroup) ── */
+.toolbar-ink {
+  align-items: center;
+}
+
+.ink-tools,
+.ink-colors {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.ink-tool-btn[aria-pressed='true'],
+.ink-pen-only[aria-pressed='true'] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.ink-swatch {
+  position: relative;
+  width: var(--touch, 44px);
+  height: var(--touch, 44px);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+.ink-swatch::after {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  background: var(--swatch);
+  box-shadow: 0 0 0 1px var(--color-border);
+}
+.ink-swatch[aria-pressed='true']::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  border: 3px solid var(--color-accent);
+}
+.ink-swatch:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* 굵기 3단계 (INK_SIZES). 점 크기로 굵기를 보인다 */
+.ink-sizes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ink-size-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch, 44px);
+  height: var(--touch, 44px);
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+.ink-size-dot {
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: 50%;
+  background: var(--color-text);
+}
+.ink-size-btn[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+.ink-size-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* 선 지우개를 고른 동안 색·굵기는 흐리게(누르면 펜으로 돌아간다) */
+.ink-colors.is-disabled,
+.ink-sizes.is-disabled {
+  opacity: 0.5;
+}
+
+/* 격자 맞춤 버튼 켜짐 */
+.toolbar-snap[aria-pressed='true'] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+/* ── 종이 층 (page-screen.js .page-paper, stage 첫 자식). 위젯 층·잉크 캔버스 아래(5.4) ──
+   --page-bg는 backgroundView(page.background).colorCss. 없으면 테마 종이색.
+   무늬 간격 50px = PAGE_PATTERN_GAP (config.js). 두 곳을 같이 바꾼다.
+   stage가 1000px 기준이라 Page_Coordinates 간격 그대로 배율과 함께 바뀐다 */
+.page-paper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1000px;   /* PAGE_W */
+  height: 1414px;  /* PAGE_H */
+  pointer-events: none;
+  background-color: var(--page-bg, var(--page-paper));
+}
+.page-paper[data-pattern='lined'] {
+  background-image: repeating-linear-gradient(to bottom, transparent 0 49px, var(--page-line) 49px 50px);
+}
+.page-paper[data-pattern='grid'] {
+  background-image:
+    linear-gradient(to right, var(--page-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--page-line) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.page-paper[data-pattern='dot'] {
+  background-image: radial-gradient(circle, var(--page-line) 2px, transparent 2.5px);
+  background-size: 50px 50px;
+}
+
+/* 격자 맞춤이 켜진 편집 모드: 배경 무늬 위에 SNAP_GRID(25) 간격 격자선 (5.7, 7.9) */
+[data-mode='edit'] .page-stage[data-snap='true'] .page-paper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--page-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--page-line) 1px, transparent 1px);
+  background-size: 25px 25px;
+}
+
+/* ── 페이지 화면을 담는 자리 (main-screen.js, monthly-page.js) ── */
+.page-host {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* ── 월간 머리글 (monthly-page.js): 이전 달 · YYYY년 M월 · 다음 달 ── */
+.monthly-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+
+.monthly-title {
+  margin: 0;
+  font-size: 1.3rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.monthly-nav {
+  min-width: var(--touch, 44px);
+  min-height: var(--touch, 44px);
+}
+
+/* ── 다이어리 허브 (diary.js) ── */
+.diary-hub {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.diary-hub-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: var(--space);
+}
+
+.diary-hub-link {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: var(--touch, 44px);
+  padding: var(--space);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.diary-hub-link:active {
+  background: var(--color-surface-alt);
+}
+
+.diary-hub-label {
+  font-weight: 600;
+}
+
+.diary-hub-note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+/* ── 자유 페이지 목록 (free-page-list.js). 좁은 화면에서도 가로로 넘치지 않는다(26.2) ── */
+.fp-list {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.fp-list-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px var(--space);
+  margin: 0 0 var(--space);
+}
+
+.fp-list-head .screen-title {
+  margin: 0;
+}
+
+.fp-list-head .btn {
+  margin-left: auto;
+}
+
+.fp-list-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fp-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 8px;
+  padding: 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+}
+
+.fp-item-link {
+  flex: 1 1 200px;
+  min-width: 0;
+  min-height: var(--touch, 44px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px var(--space);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.fp-item-link:active {
+  background: var(--color-surface-alt);
+}
+
+.fp-item-title {
+  overflow-wrap: anywhere;
+}
+
+.fp-item-title.is-empty {
+  color: var(--color-text-muted);
+}
+
+.fp-item-date {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.fp-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.fp-item-actions .btn {
+  min-width: var(--touch, 44px);
+  min-height: var(--touch, 44px);
+}
+
+.fp-item-delete {
+  color: var(--color-danger);
+}
+
+.fp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: calc(var(--space) * 2) var(--space);
+  text-align: center;
+}
+
+.fp-empty-text {
+  margin: 0;
+  color: var(--color-text-muted);
+}

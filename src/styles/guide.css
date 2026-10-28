@@ -1,0 +1,179 @@
+/* 안내서·자주 묻는 질문 화면(screens/guide.js)과 설정 화면의 새 구역(테마, 안내서, 문의).
+   색은 base.css 변수만 쓴다. 테마가 바뀌면 같이 바뀐다. */
+
+/* ── 안내서·FAQ ── */
+.guide {
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: var(--space);
+  box-sizing: border-box;
+  color: var(--color-text);
+  line-height: var(--line-height);
+  overflow-wrap: anywhere;
+}
+
+.guide-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--space) / 2);
+  margin-bottom: var(--space);
+}
+
+.guide-header .screen-title {
+  margin: 0;
+}
+
+.guide-section {
+  margin: 0 0 calc(var(--space) * 1.5);
+  padding: var(--space);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+/* 첫 구역(백업)은 눈에 띄게 */
+.guide-section:first-of-type {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.guide-section-title {
+  margin: 0 0 calc(var(--space) / 2);
+  font-size: 1.15rem;
+}
+
+.guide-text {
+  margin: 0 0 calc(var(--space) / 2);
+}
+
+.guide-steps {
+  margin: calc(var(--space) / 2) 0 0;
+  padding-left: 1.5em;
+}
+
+.guide-steps li + li {
+  margin-top: 0.4em;
+}
+
+.guide-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--space) / 2);
+  margin: var(--space) 0;
+}
+
+.guide-link {
+  align-items: center;
+}
+
+.guide-version {
+  margin: var(--space) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) / 2);
+}
+
+.faq-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: calc(var(--space) / 2) var(--space);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.faq-question:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+.faq-item[open] .faq-question {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.faq-answer {
+  margin: 0;
+  padding: calc(var(--space) / 2) var(--space) var(--space);
+}
+
+/* ── 설정 화면 새 구역 (테마, 안내서, 문의) ── */
+.settings-block {
+  margin: calc(var(--space) * 1.5) 0;
+  padding: var(--space);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow-wrap: anywhere;
+}
+
+.settings-block h2 {
+  margin: 0 0 calc(var(--space) / 2);
+  font-size: 1.1rem;
+}
+
+.settings-block-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--space) / 2);
+}
+
+.settings-block .btn {
+  min-height: var(--touch);
+  max-width: 100%;
+}
+
+.theme-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--space) / 2);
+}
+
+.theme-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: var(--touch);
+  max-width: 100%;
+  padding: 0 var(--space);
+  font: inherit;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.theme-choice[aria-pressed='true'] {
+  border: 2px solid var(--color-accent);
+  background: var(--color-accent-soft);
+  font-weight: 600;
+}
+
+.theme-swatch {
+  display: inline-block;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--swatch, transparent);
+}
+
+.contact-note {
+  margin: 0 0 calc(var(--space) / 2);
+  color: var(--color-text-muted);
+}

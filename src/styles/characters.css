@@ -1,0 +1,105 @@
+/* 캐릭터 목록 (screens/character-list.js). 터치 영역은 최소 var(--touch) = 44px (요구사항 18.3) */
+
+.character-list {
+  padding: var(--space);
+}
+
+.character-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space);
+  margin: 0 0 var(--space);
+}
+.character-list-head .screen-title {
+  margin: 0;
+}
+.character-list .btn {
+  min-height: var(--touch);
+}
+
+/* ── 역할 필터: 가로로 넘기는 칩 줄 ── */
+.role-filter {
+  display: flex;
+  gap: 8px;
+  margin: 0 calc(-1 * var(--space)) var(--space);
+  padding: 0 var(--space) 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.role-filter::-webkit-scrollbar {
+  display: none;
+}
+.role-filter .chip {
+  flex: none;
+  min-height: var(--touch);
+  white-space: nowrap;
+}
+
+/* ── 카드 격자 ── */
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.character-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  min-height: var(--touch);
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: var(--shadow);
+  color: var(--color-text);
+  text-decoration: none;
+}
+.character-card:active {
+  background: var(--color-surface-alt);
+}
+.character-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 0 0 4px;
+  border-radius: var(--radius-small);
+  object-fit: cover;
+  background: var(--color-surface-alt);
+}
+.character-name {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.character-name.is-empty {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+.character-role {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+/* ── 빈 상태 ── */
+.character-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space);
+  padding: calc(var(--space) * 2) var(--space);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  text-align: center;
+}
+.character-empty-text {
+  margin: 0;
+  color: var(--color-text-muted);
+}

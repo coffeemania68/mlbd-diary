@@ -1,0 +1,166 @@
+/* 캐릭터 상세 화면 (screens/character-detail.js) */
+
+.character-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.cd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space);
+}
+
+.cd-back {
+  text-decoration: none;
+  padding-right: 8px;
+}
+
+.cd-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+}
+
+.cd-image {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 0 0 200px;
+}
+
+.cd-basic {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.cd-image-preview {
+  width: 200px;
+  aspect-ratio: 3 / 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.cd-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cd-field textarea {
+  field-sizing: content;
+  min-height: calc(var(--touch) * 2);
+}
+
+.cd-role-custom {
+  margin-top: 6px;
+}
+
+.cd-subtitle {
+  margin: 0;
+  font-size: var(--font-size-small);
+  font-weight: normal;
+  color: var(--color-text-muted);
+}
+
+.cd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cd-quotes,
+.cd-appearances {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cd-quote {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cd-quote input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cd-appearances li {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+}
+
+/* 항목 전체가 눌리는 링크. 높이 44px 이상 */
+.cd-episode-link {
+  min-height: var(--touch);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: inherit;
+}
+
+.cd-episode-link:hover .cd-episode-title {
+  text-decoration: underline;
+}
+
+.cd-episode-link:focus-visible {
+  outline: 2px solid var(--color-accent, currentColor);
+  outline-offset: 2px;
+}
+
+.cd-episode-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.cd-episode-number {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cd-empty {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.cd-danger-zone {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space);
+  border-top: 1px solid var(--color-border);
+}
+
+@media (max-width: 480px) {
+  .cd-image {
+    flex-basis: 100%;
+    align-items: center;
+  }
+}

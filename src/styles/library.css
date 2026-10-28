@@ -1,0 +1,293 @@
+/* 서재 카드 격자(screens/library.js)와 작품 폼(screens/project-form.js).
+   누를 수 있는 것은 모두 44px 이상 (요구사항 18.3). */
+
+/* ── 서재 ── */
+.library {
+  padding: var(--space);
+}
+
+/* 제목 줄: 왼쪽 제목, 오른쪽 "안내서" 링크. 좁은 화면(360px)에서는 줄을 접는다 */
+.library-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.library-head .screen-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.library-guide-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch);
+  min-width: var(--touch);
+  max-width: 100%;
+  text-decoration: none;
+}
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-card {
+  position: relative;
+  display: flex;
+  min-height: 160px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: var(--shadow);
+}
+
+.project-card-link {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  min-width: 0;
+  padding: 0 0 12px;
+  border-radius: var(--radius);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.project-card-link:active {
+  background: var(--color-surface-alt);
+}
+
+.project-card-cover {
+  display: block;
+  height: 72px;
+  margin-bottom: 8px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--cover, var(--color-accent-soft));
+}
+
+.project-card-title {
+  padding: 0 12px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.project-card-date {
+  padding: 0 12px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+/* "⋯" 메뉴: 표지 띠 오른쪽 위 */
+.project-card-menu {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.project-card-menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch);
+  height: var(--touch);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.85);
+  color: var(--color-text);
+  font-size: 1.25rem;
+  line-height: 1;
+  list-style: none;
+  cursor: pointer;
+}
+
+.project-card-menu-button::-webkit-details-marker {
+  display: none;
+}
+
+.project-card-menu-list {
+  position: absolute;
+  top: calc(var(--touch) + 4px);
+  right: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  padding: 4px 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: var(--color-surface);
+  box-shadow: 0 4px 12px rgb(43 39 51 / 0.18);
+}
+
+.project-card-menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--touch);
+  padding: 0 var(--space);
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font-size: var(--font-size);
+  text-align: left;
+  text-decoration: none;
+}
+
+.project-card-menu-item:active {
+  background: var(--color-surface-alt);
+}
+
+.project-card-menu-danger {
+  color: var(--color-danger);
+}
+
+/* "새 작품" 카드 */
+.project-card-new {
+  border-style: dashed;
+  box-shadow: none;
+  background: transparent;
+}
+
+.project-card-new .project-card-link {
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  color: var(--color-accent);
+}
+
+.project-card-new-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+/* 작품이 없을 때 */
+.library-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space);
+  padding: var(--space);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.library-empty-text {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+/* "새 작품" + "백업 파일로 복원". 좁은 화면(360px)에서는 줄을 접어 가로 스크롤을 만들지 않는다 */
+.library-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+  min-width: 0;
+}
+.library-empty-actions .btn {
+  min-height: var(--touch);
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
+
+/* ── 작품 폼 (새 작품·작품 정보) ── */
+.project-form {
+  max-width: 640px;
+  padding: var(--space);
+}
+
+.project-form-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space);
+}
+
+.project-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.form-label {
+  padding: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+/* 표지 색 원형 버튼 7개 */
+.cover-swatches {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.cover-swatches > legend {
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.cover-swatch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch);
+  height: var(--touch);
+}
+
+/* 라디오 자체는 숨기고 색 원이 모양을 맡는다 (키보드 초점은 그대로) */
+.cover-swatch input[type='radio'] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.cover-swatch-dot {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--swatch);
+  border: 1px solid rgb(0 0 0 / 0.12);
+  pointer-events: none;
+}
+
+.cover-swatch input:checked + .cover-swatch-dot {
+  box-shadow: 0 0 0 3px var(--color-surface), 0 0 0 5px var(--color-accent);
+}
+
+.cover-swatch input:focus-visible + .cover-swatch-dot {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.project-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: calc(var(--space) * 1.5);
+}

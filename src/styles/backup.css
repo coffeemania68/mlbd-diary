@@ -1,0 +1,106 @@
+/* 백업 알림 띠(main-screen.js)와 설정 화면 백업 구역(settings.js), 내보내기 버튼(parts/backup-buttons.js).
+   버튼은 44px 이상(26.1), 좁은 화면에서도 가로 스크롤이 생기지 않게 줄을 접는다(26.2). */
+
+/* ── 버튼 줄 ── */
+.backup-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+.backup-btn {
+  min-height: var(--touch);
+  min-width: var(--touch);
+  max-width: 100%;
+  justify-content: center;
+  white-space: normal;
+  text-align: center;
+}
+
+/* ── 백업 알림 띠 (메인 페이지 위쪽) ── */
+.backup-reminder {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px var(--space);
+  margin: 0 0 12px;
+  padding: 14px var(--space);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.backup-reminder-text {
+  flex: 1 1 220px;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* ── 설정 화면 백업 구역 ── */
+.backup-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: var(--space);
+  padding: var(--space);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.backup-section-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.backup-last {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+/* ── 앱 안 자동 보관(스냅샷) 목록 ── */
+.snapshot-title {
+  margin: 8px 0 0;
+  font-size: 1rem;
+}
+.snapshot-empty {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+.snapshot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+}
+.snapshot-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--color-border);
+  min-width: 0;
+}
+.snapshot-row:first-child {
+  border-top: none;
+}
+.snapshot-text {
+  flex: 1 1 200px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+.snapshot-restore-btn {
+  flex: 0 0 auto;
+}

@@ -1,0 +1,174 @@
+/* 상단 바, 레일(≥600px), 하단 탭(<600px).
+   DOM은 shell.js가 한 번만 만들고, 배치는 아래 미디어 쿼리만 바꾼다(요구사항 6.2–6.4). */
+
+:root {
+  --top-bar-h: 56px;
+  --tab-h: 64px;   /* 휴대폰 하단 탭 높이 */
+  --rail-w: 88px;  /* 태블릿 왼쪽 레일 폭 */
+}
+
+/* ── 상단 바 (위에 붙어 있음) ── */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: calc(var(--top-bar-h) + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) calc(12px + env(safe-area-inset-right)) 0
+    calc(12px + env(safe-area-inset-left));
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.project-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 50%;
+  padding: 0 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.project-switcher:active {
+  background: var(--color-surface-alt);
+}
+
+.project-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-switcher-caret {
+  color: var(--color-text-muted);
+  flex: none;
+}
+
+.location {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+/* ── Nav 공통 ── */
+.nav {
+  display: flex;
+  background: var(--color-surface);
+  z-index: 15;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 12px;
+  border-radius: var(--radius);
+}
+
+.nav-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.nav-item[aria-current='page'] {
+  color: var(--color-accent-strong);
+  background: var(--color-accent-soft);
+  font-weight: 600;
+}
+
+#screen {
+  display: block;
+  padding: var(--space);
+  padding-left: calc(var(--space) + env(safe-area-inset-left));
+  padding-right: calc(var(--space) + env(safe-area-inset-right));
+}
+
+/* ── 휴대폰 (600px 미만): 하단 고정 탭 ── */
+.nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--tab-h) + env(safe-area-inset-bottom));
+  padding: 4px calc(4px + env(safe-area-inset-right)) env(safe-area-inset-bottom)
+    calc(4px + env(safe-area-inset-left));
+  border-top: 1px solid var(--color-border);
+  flex-direction: row;
+}
+
+#screen {
+  /* 하단 탭이 내용을 가리지 않게 탭 높이 + 안전 영역만큼 띄운다 */
+  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + var(--space));
+}
+
+/* ── 태블릿 (600px 이상): 왼쪽 세로 레일 ── */
+@media (min-width: 600px) {
+  .nav {
+    top: 0;
+    right: auto;
+    bottom: 0;
+    width: calc(var(--rail-w) + env(safe-area-inset-left));
+    height: auto;
+    padding: calc(env(safe-area-inset-top) + 8px) 8px
+      calc(8px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left));
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+    border-top: 0;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .nav-item {
+    flex: none;
+    min-height: 64px;
+  }
+
+  .app:not(.no-project) .top-bar,
+  .app:not(.no-project) #screen {
+    margin-left: calc(var(--rail-w) + env(safe-area-inset-left));
+  }
+
+  .app:not(.no-project) .top-bar {
+    padding-left: 12px;
+  }
+
+  #screen {
+    padding: calc(var(--space) * 1.5);
+    padding-right: calc(var(--space) * 1.5 + env(safe-area-inset-right));
+    padding-bottom: calc(var(--space) * 1.5 + env(safe-area-inset-bottom));
+  }
+
+  .app:not(.no-project) #screen {
+    padding-left: calc(var(--space) * 1.5);
+  }
+}
+
+/* ── 서재·새 작품: Nav와 작품 전환 버튼 숨김 (요구사항 6.8) ── */
+.app.no-project .nav,
+.app.no-project .project-switcher {
+  display: none;
+}
+
+.app.no-project #screen {
+  padding-bottom: calc(var(--space) + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 600px) {
+  .app.no-project #screen {
+    padding-bottom: calc(var(--space) * 1.5 + env(safe-area-inset-bottom));
+  }
+}

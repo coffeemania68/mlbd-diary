@@ -1,0 +1,47 @@
+# 구성 B: mlbd-diary 폴더가 저장소 루트다.
+# 구성 A(d:\2027Pnlanner 전체가 저장소 하나)로 쓸 때는 이 파일을 저장소 루트의
+# .github/workflows/로 옮기고 아래 주석이 붙은 세 줄만 바꾼다.
+name: Deploy mlbd-diary
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .                          # 구성 A: mlbd-diary
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json    # 구성 A: mlbd-diary/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist                                  # 구성 A: mlbd-diary/dist (uses 단계는 working-directory 영향 없음)
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
